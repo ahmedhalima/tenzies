@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import './App.css'
 import Die from "./components/Die.jsx";
 import {nanoid} from "nanoid";
@@ -20,11 +20,19 @@ function App() {
         <Die hold={() => hold(item.id)} isHeld={item.isHeld} key={item.id} value={item.value}/>
     );
 
+    const btnRef = useRef(null);
+
 
 
     const allHeld = dice.every((item) => item.isHeld === true);
     const allSameValue = new Set(dice.map(item => item.value)).size === 1;
     let gameWon = allHeld && allSameValue;
+
+    useEffect(function () {
+        if (gameWon) {
+            btnRef.current.focus();
+        }
+    }, [gameWon]);
 
 
     function rollDice() {
@@ -56,7 +64,7 @@ function App() {
                 {diceElements}
             </div>
 
-            <button className="roll-dice" onClick={rollDice}>
+            <button ref={btnRef} className="roll-dice" onClick={rollDice}>
                 { gameWon ? 'New Game' : 'roll' }
             </button>
         </main>
